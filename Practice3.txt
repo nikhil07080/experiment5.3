@@ -1,0 +1,42 @@
+db.products.insertMany([
+  {
+    name: "Stylish Sneakers",
+    price: 59.99,
+    category: "Footwear",
+    variants: [
+      { color: "Red", size: "M", stock: 10 },
+      { color: "Blue", size: "L", stock: 5 }
+    ]
+  },
+  {
+    name: "Classic Leather Wallet",
+    price: 35.00,
+    category: "Accessories",
+    variants: [
+      { color: "Black", size: "Standard", stock: 20 },
+      { color: "Brown", size: "Standard", stock: 15 }
+    ]
+  },
+  {
+    name: "Slim Fit Jeans",
+    price: 45.50,
+    category: "Clothing",
+    variants: [
+      { color: "Blue", size: "32", stock: 12 },
+      { color: "Black", size: "34", stock: 8 }
+    ]
+  }
+]);
+db.products.find().pretty();
+db.products.find({ category: "Footwear" }).pretty();
+db.products.find(
+  {},
+  { name: 1, "variants.color": 1, _id: 0 }
+).pretty();
+db.products.find({ "variants.color": "Black" }).pretty();
+db.products.aggregate([
+  { $match: { "variants.color": "Blue" } },
+  { $unwind: "$variants" },
+  { $match: { "variants.color": "Blue" } },
+  { $group: { _id: "$name", totalStock: { $sum: "$variants.stock" } } }
+]);
